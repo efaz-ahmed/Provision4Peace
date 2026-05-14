@@ -1,0 +1,185 @@
+/* ============================================================
+   Provision4Peace — main.css
+   Tokens, reset, body, typography, font imports
+   ============================================================ */
+
+/* Fonts loaded via <link> in each HTML <head> for browser caching.
+   Listed here for reference:
+   Cormorant Garamond 400, 500, 500 italic, 600
+   Inter 300, 400, 500, 600
+*/
+
+/* ---------- Design tokens ---------- */
+:root {
+  /* Navy family */
+  --navy:        #0B1E3D;
+  --navy-deep:   #061330;
+  --navy-mid:    #14274D;
+
+  /* Gold family */
+  --gold:        #C9A24E;
+  --gold-soft:   #E8D2A0;
+  --gold-deep:   #8A6C2D;
+
+  /* Cream family */
+  --cream:       #F6F1E6;
+  --cream-soft:  #FAF6EC;
+  --cream-card:  #ECE3CC;  /* Slightly darker than page bg — used for home-page cards */
+
+  /* Ink family */
+  --ink:         #1F2937;
+  --ink-soft:    #4B5563;
+
+  /* Rules and borders */
+  --rule:        #E5DDC9;
+
+  /* Form validation */
+  --error:       #B0413E;
+  --error-soft:  #FBF1F0;
+
+  /* Type stacks */
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Sizing & rhythm */
+  --container-max: 1180px;
+  --container-narrow: 760px;
+  --section-y: clamp(48px, 8vw, 96px);
+  --content-pad-x: clamp(20px, 4vw, 56px);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ---------- Reset ---------- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img, picture, svg {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ---------- Typography ---------- */
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--navy);
+}
+.display em {
+  font-style: italic;
+  color: var(--gold-deep);
+}
+
+.display--hero {
+  font-size: clamp(40px, 6vw, 64px);
+}
+.display--page {
+  font-size: clamp(34px, 4.5vw, 52px);
+}
+.display--section {
+  font-size: clamp(28px, 3vw, 38px);
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--gold-deep);
+}
+
+.prose {
+  max-width: 620px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+}
+.prose p + p { margin-top: 1em; }
+
+.rule-gold {
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+  border: 0;
+  margin: 0;
+}
+
+/* ---------- Centred prose utility ---------- */
+.prose--centred {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+.u-centre {
+  text-align: center;
+}
+.u-mt-36 {
+  margin-top: 36px;
+}
+
+/* ---------- Focus-visible (accessibility) ---------- */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.btn:focus-visible {
+  outline-offset: 3px;
+}
+.site-header__nav a:focus-visible,
+.site-drawer a:focus-visible,
+.site-footer__col a:focus-visible {
+  outline-offset: 4px;
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

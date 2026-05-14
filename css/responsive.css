@@ -1,0 +1,105 @@
+/* ============================================================
+   Provision4Peace — responsive.css
+   Media queries — desktop-first; narrow down for tablet/mobile
+   ============================================================ */
+
+/* ---------- Tablet: 640–899px ---------- */
+@media (max-width: 899px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .step-trio { grid-template-columns: repeat(3, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; gap: 40px; }
+  .workshop-card { grid-template-columns: 1fr; }
+  .workshop-card__visual { aspect-ratio: 16 / 9; max-height: 240px; width: 100%; }
+  .site-footer__cols { grid-template-columns: 1fr 1fr; }
+  .site-footer__brand { grid-column: 1 / -1; margin-bottom: 8px; }
+}
+
+/* ---------- Mobile: <640px ---------- */
+@media (max-width: 639px) {
+  /* Header — hide centre nav, show toggle */
+  .site-header__nav { display: none; }
+  .site-header__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .site-header__right .btn { display: none; } /* "Speak to an Advisor" hides; drawer carries it */
+
+  /* Hero — pad less, shrink headline, stack CTAs */
+  .hero { min-height: 70vh; padding: 80px 0 60px; }
+  .hero__inner { padding-left: 24px; padding-right: 24px; }
+  .hero__headline { font-size: clamp(36px, 9vw, 48px); }
+  .hero__ctas { flex-direction: column; align-items: stretch; }
+  .hero__ctas .btn { width: 100%; justify-content: center; }
+
+  /* Theme strip — slow down on mobile via JS timeScale (in animations.js).
+     CSS no longer drives the marquee; only item sizing tightens. */
+  .theme-strip__item { padding: 0 18px; font-size: 13px; }
+
+  /* Grids collapse */
+  .grid-4 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .step-trio { grid-template-columns: 1fr; gap: 24px; }
+  .grid-2 { gap: 32px; }
+
+  /* Plan card — Standard no longer scaled */
+  .plan-card--recommended { transform: none; }
+  .plan-card--recommended:hover { transform: translateY(-4px); }
+
+  /* Plan compare — stacked card variant */
+  .plan-compare { display: block; border: none; background: transparent; }
+  .plan-compare thead { display: none; }
+  .plan-compare tbody { display: flex; flex-direction: column; gap: 16px; }
+  .plan-compare tbody tr {
+    display: block;
+    background: var(--cream-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .plan-compare tbody tr:nth-child(even) td { background: transparent; }
+  .plan-compare tbody td {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed var(--rule);
+    padding: 10px 0;
+    text-align: left !important;
+  }
+  .plan-compare tbody td:last-child { border-bottom: none; }
+  .plan-compare tbody td::before {
+    content: attr(data-label);
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .plan-compare__recommended-col { background: transparent !important; }
+
+  /* First-column cell becomes the row title — suppress its data-label */
+  .plan-compare tbody td:first-child {
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--navy);
+    font-weight: 500;
+    padding-top: 0;
+    border-bottom: 1px solid var(--gold);
+    margin-bottom: 8px;
+    text-align: left;
+    justify-content: flex-start;
+  }
+  .plan-compare tbody td:first-child::before { content: ''; }
+
+  /* Page hero — slimmer */
+  .page-hero { padding: 80px 0 60px; }
+
+  /* Footer */
+  .site-footer__cols { grid-template-columns: 1fr; }
+  .site-footer__col:last-child { grid-column: auto; }
+  .site-footer__social { justify-content: center; }
+
+  /* Form */
+  .form__radio-group { flex-direction: column; gap: 12px; }
+  .form__submit { width: 100%; align-self: stretch; }
+
+  /* Section padding tighter on mobile */
+  .section { padding-top: 56px; padding-bottom: 56px; }
+}

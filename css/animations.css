@@ -1,0 +1,35 @@
+/* ============================================================
+   Provision4Peace — animations.css
+   GSAP handles all timeline motion (hero stagger, marquee, scroll reveals).
+   CSS handles only: structural display rules for animated elements,
+   :hover transitions, prefers-reduced-motion overrides.
+   ============================================================ */
+
+/* Hero headline word — must be inline-block so GSAP can transform it.
+   No opacity/transform here — GSAP's from() sets the initial hidden state.
+   If GSAP fails to load, words remain visible. */
+.hero__headline .word {
+  display: inline-block;
+}
+
+/* Theme strip track — flex layout for the marquee.
+   No CSS animation; GSAP runs it. If GSAP fails, the track just sits static. */
+.theme-strip__track {
+  display: inline-flex;
+  will-change: transform;
+}
+
+/* Reveal elements — visible by default (no CSS hidden state).
+   GSAP's from() sets the initial hidden state when it runs.
+   This is the "fail-safe visible" pattern: content always renders even if JS fails. */
+.reveal {
+  /* intentionally empty — GSAP owns the from-state */
+}
+
+/* prefers-reduced-motion — CSS transitions clamped near-instant.
+   animations.js also detects this and skips creating GSAP timelines. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.001ms !important;
+  }
+}

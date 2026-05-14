@@ -1,0 +1,96 @@
+/* ============================================================
+   Provision4Peace — sections.css
+   Container, section wrapper, page-hero base, layout primitives
+   ============================================================ */
+
+/* ---------- Container ---------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--content-pad-x);
+  padding-right: var(--content-pad-x);
+}
+.container--narrow {
+  max-width: var(--container-narrow);
+}
+
+/* ---------- Section wrapper ---------- */
+.section {
+  padding-top: var(--section-y);
+  padding-bottom: var(--section-y);
+}
+.section--cream-soft {
+  background: var(--cream-soft);
+}
+.section--dark {
+  background: var(--navy);
+  color: var(--cream);
+}
+.section--dark .display { color: var(--cream); }
+.section--dark .prose { color: rgba(246, 241, 230, 0.85); }
+.section--dark .eyebrow { color: var(--gold); }
+.section--dark .rule-gold { background: var(--gold-soft); }
+
+.section__head {
+  margin-bottom: clamp(28px, 4vw, 48px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+}
+.section__head--centred {
+  align-items: center;
+  text-align: center;
+}
+
+/* ---------- Page hero (inner pages) ---------- */
+.page-hero {
+  background: var(--navy);
+  color: var(--cream);
+  padding: clamp(80px, 12vw, 140px) 0 clamp(60px, 9vw, 100px);
+  position: relative;
+}
+.page-hero__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+  max-width: 720px;
+}
+.page-hero .display {
+  color: var(--cream);
+}
+.page-hero .display em {
+  color: var(--gold-soft);
+}
+.page-hero .eyebrow {
+  color: var(--gold);
+}
+.page-hero .rule-gold {
+  background: var(--gold);
+  margin-top: 6px;
+}
+.page-hero__body {
+  margin-top: 8px;
+  max-width: 560px;
+  color: rgba(246, 241, 230, 0.85);
+  font-size: 16px;
+}
+
+/* ---------- Grid utilities ---------- */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+}
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+}

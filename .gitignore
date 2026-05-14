@@ -1,0 +1,12 @@
+# Internal project materials — not for public repo
+docs/
+provision4peace_website_brief.md
+.superpowers/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
