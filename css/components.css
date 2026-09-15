@@ -1134,6 +1134,14 @@
   flex-direction: column;
   gap: 22px;
 }
+.form__conditional {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.form__conditional[hidden] {
+  display: none;
+}
 .form__field {
   display: flex;
   flex-direction: column;
@@ -1202,6 +1210,21 @@
   padding-right: 36px;
   cursor: pointer;
 }
+.form__input--file {
+  padding: 8px;
+  cursor: pointer;
+}
+.form__input--file::file-selector-button {
+  font-family: var(--font-body);
+  font-weight: 500;
+  color: var(--navy);
+  background: var(--gold-soft);
+  border: 0;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-right: 12px;
+  cursor: pointer;
+}
 .form__input:invalid:not(:placeholder-shown),
 .form__textarea:invalid:not(:placeholder-shown) {
   border-color: var(--error);
@@ -1258,6 +1281,25 @@
 .form__radio input[type="radio"]:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
+}
+.form__field-hint {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.form__notice {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: rgba(232, 210, 160, 0.28);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 14px 16px;
+}
+.form__notice strong {
+  color: var(--navy);
 }
 .form__hint {
   font-family: var(--font-body);

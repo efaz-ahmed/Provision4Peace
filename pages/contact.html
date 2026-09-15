@@ -144,6 +144,15 @@
           <form class="form" action="mailto:Info@provision4peace.org.uk" method="POST" enctype="text/plain" aria-label="Enquiry form">
 
             <div class="form__field">
+              <label class="form__label" for="contact-reason">Reason for Enquiry</label>
+              <select class="form__select" id="contact-reason" name="Reason" required>
+                <option value="" disabled selected>Please select</option>
+                <option value="membership">Apply for a membership fund plan</option>
+                <option value="general">General Enquiry</option>
+              </select>
+            </div>
+
+            <div class="form__field">
               <label class="form__label" for="contact-name">Full name</label>
               <input class="form__input" type="text" id="contact-name" name="Name" placeholder="Your full name" autocomplete="name" required />
             </div>
@@ -153,39 +162,68 @@
               <input class="form__input" type="email" id="contact-email" name="Email" placeholder="you@example.com" autocomplete="email" required />
             </div>
 
-            <div class="form__field">
-              <label class="form__label" for="contact-phone">Phone number <em>(optional)</em></label>
-              <input class="form__input" type="tel" id="contact-phone" name="Phone" placeholder="e.g. 07849 991146" autocomplete="tel" />
-            </div>
+            <div class="form__conditional" id="membership-enquiry-fields" hidden>
+              <div class="form__field">
+                <label class="form__label" for="membership-dob">Date of birth</label>
+                <input class="form__input" type="date" id="membership-dob" name="Date of birth" autocomplete="bday" disabled data-required-when-visible="true" />
+              </div>
 
-            <div class="form__field">
-              <label class="form__label" for="contact-reason">Reason for enquiry</label>
-              <select class="form__select" id="contact-reason" name="Reason" required>
-                <option value="" disabled selected>Please select</option>
-                <option value="General enquiry">General enquiry</option>
-                <option value="About a Membership Plan">About a Membership Plan</option>
-                <option value="Workshops &amp; events">Workshops &amp; events</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
+              <div class="form__field">
+                <label class="form__label" for="membership-plan">Preferred Membership Fund Plan</label>
+                <select class="form__select" id="membership-plan" name="Preferred Membership Fund Plan" disabled data-required-when-visible="true">
+                  <option value="" disabled selected>Please select</option>
+                  <option value="Basic">Basic</option>
+                  <option value="Standard">Standard</option>
+                  <option value="Comprehensive">Comprehensive</option>
+                </select>
+              </div>
 
-            <div class="form__field">
-              <span class="form__label" id="contact-method-label">Preferred contact method</span>
-              <div class="form__radio-group" role="radiogroup" aria-labelledby="contact-method-label">
-                <label class="form__radio">
-                  <input type="radio" name="ContactMethod" value="Email" checked />
-                  <span>Email</span>
-                </label>
-                <label class="form__radio">
-                  <input type="radio" name="ContactMethod" value="Phone" />
-                  <span>Phone</span>
-                </label>
+              <div class="form__field">
+                <label class="form__label" for="membership-address">Full address</label>
+                <textarea class="form__textarea" id="membership-address" name="Full address" placeholder="Your full residential address" autocomplete="street-address" disabled data-required-when-visible="true"></textarea>
+              </div>
+
+              <div class="form__field">
+                <label class="form__label" for="membership-proof-id">Upload proof of ID</label>
+                <input class="form__input form__input--file" type="file" id="membership-proof-id" name="Proof of ID" accept="application/pdf,image/jpeg,image/png" disabled data-required-when-visible="true" />
+                <p class="form__field-hint">Please select a passport copy or driving licence.</p>
+              </div>
+
+              <div class="form__field">
+                <label class="form__label" for="membership-proof-address">Upload proof of address</label>
+                <input class="form__input form__input--file" type="file" id="membership-proof-address" name="Proof of address" accept="application/pdf,image/jpeg,image/png" disabled data-required-when-visible="true" />
+                <p class="form__field-hint">Please select a bank statement, council tax bill, utility bill, or letter from HMRC. The document must be dated within the past 3 months.</p>
+              </div>
+
+              <div class="form__notice" role="note">
+                <strong>Before sending your email:</strong> these files cannot be attached automatically. When your email client opens, attach both documents manually before sending.
               </div>
             </div>
 
-            <div class="form__field">
-              <label class="form__label" for="contact-message">Message</label>
-              <textarea class="form__textarea" id="contact-message" name="Message" placeholder="Tell us a little about your enquiry&hellip;" required></textarea>
+            <div class="form__conditional" id="general-enquiry-fields" hidden>
+              <div class="form__field">
+                <label class="form__label" for="contact-phone">Phone number <em>(optional)</em></label>
+                <input class="form__input" type="tel" id="contact-phone" name="Phone" placeholder="e.g. 07849 991146" autocomplete="tel" disabled />
+              </div>
+
+              <div class="form__field">
+                <span class="form__label" id="contact-method-label">Preferred contact method</span>
+                <div class="form__radio-group" role="radiogroup" aria-labelledby="contact-method-label">
+                  <label class="form__radio">
+                    <input type="radio" name="ContactMethod" value="Email" checked disabled />
+                    <span>Email</span>
+                  </label>
+                  <label class="form__radio">
+                    <input type="radio" name="ContactMethod" value="Phone" disabled />
+                    <span>Phone</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form__field">
+                <label class="form__label" for="contact-message">Message</label>
+                <textarea class="form__textarea" id="contact-message" name="Message" placeholder="Tell us a little about your enquiry&hellip;" disabled data-required-when-visible="true"></textarea>
+              </div>
             </div>
 
             <button type="submit" class="btn btn--primary btn--large form__submit">Send Enquiry</button>

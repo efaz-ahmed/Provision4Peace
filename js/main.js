@@ -52,4 +52,28 @@
   if (yearEl) {
     yearEl.textContent = String(new Date().getFullYear());
   }
+
+  // ---------- Contact form enquiry type ----------
+  const reasonSelect = document.getElementById('contact-reason');
+  const membershipFields = document.getElementById('membership-enquiry-fields');
+  const generalFields = document.getElementById('general-enquiry-fields');
+
+  if (reasonSelect && membershipFields && generalFields) {
+    const setSectionState = (section, visible) => {
+      section.hidden = !visible;
+      section.querySelectorAll('input, select, textarea').forEach((field) => {
+        field.disabled = !visible;
+        field.required = visible && field.dataset.requiredWhenVisible === 'true';
+      });
+    };
+
+    const updateEnquiryFields = () => {
+      setSectionState(membershipFields, reasonSelect.value === 'membership');
+      setSectionState(generalFields, reasonSelect.value === 'general');
+    };
+
+    reasonSelect.addEventListener('change', updateEnquiryFields);
+    updateEnquiryFields();
+  }
+
 })();
