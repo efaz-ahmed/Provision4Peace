@@ -141,7 +141,7 @@
           </div>
 
           <!-- ───── Right column: enquiry form ───── -->
-          <form class="form" action="mailto:Info@provision4peace.org.uk" method="POST" enctype="text/plain" aria-label="Enquiry form">
+          <form class="form" id="contact-form" action="mailto:Info@provision4peace.org.uk" method="POST" enctype="text/plain" aria-label="Enquiry form">
 
             <div class="form__field">
               <label class="form__label" for="contact-reason">Reason for Enquiry</label>
@@ -183,20 +183,13 @@
                 <textarea class="form__textarea" id="membership-address" name="Full address" placeholder="Your full residential address" autocomplete="street-address" disabled data-required-when-visible="true"></textarea>
               </div>
 
-              <div class="form__field">
-                <label class="form__label" for="membership-proof-id">Upload proof of ID</label>
-                <input class="form__input form__input--file" type="file" id="membership-proof-id" name="Proof of ID" accept="application/pdf,image/jpeg,image/png" disabled data-required-when-visible="true" />
-                <p class="form__field-hint">Please select a passport copy or driving licence.</p>
-              </div>
-
-              <div class="form__field">
-                <label class="form__label" for="membership-proof-address">Upload proof of address</label>
-                <input class="form__input form__input--file" type="file" id="membership-proof-address" name="Proof of address" accept="application/pdf,image/jpeg,image/png" disabled data-required-when-visible="true" />
-                <p class="form__field-hint">Please select a bank statement, council tax bill, utility bill, or letter from HMRC. The document must be dated within the past 3 months.</p>
-              </div>
-
               <div class="form__notice" role="note">
-                <strong>Before sending your email:</strong> these files cannot be attached automatically. When your email client opens, attach both documents manually before sending.
+                <strong>Documents to attach in your email</strong>
+                <ul class="form__document-list">
+                  <li>Proof of ID: a passport copy or driving licence.</li>
+                  <li>Proof of address: a bank statement, council tax bill, utility bill, or letter from HMRC. The document must be dated within the past 3 months.</li>
+                </ul>
+                When your email draft opens, attach both documents manually before sending it. The website cannot add attachments to your email app.
               </div>
             </div>
 
@@ -226,9 +219,12 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn--primary btn--large form__submit">Send Enquiry</button>
+            <button type="submit" class="btn btn--primary btn--large form__submit">Open Email Draft</button>
 
-            <p class="form__hint">Submitting will open your email client with this enquiry pre-filled. If that doesn&rsquo;t work, write to us directly at <a href="mailto:Info@provision4peace.org.uk">Info@provision4peace.org.uk</a>.</p>
+            <p class="form__hint">This opens your email app with your details filled in. Review the draft and press Send in your email app.</p>
+            <p class="form__notice" id="contact-email-status" role="status" hidden>Your email draft should open. If it doesn&rsquo;t, copy the details below into a new message to <a href="mailto:Info@provision4peace.org.uk">Info@provision4peace.org.uk</a>. Membership applicants must attach both documents before sending.</p>
+            <a class="form__draft-link" id="contact-email-draft" href="mailto:Info@provision4peace.org.uk" hidden>Open email draft again</a>
+            <textarea class="form__textarea" id="contact-email-copy" aria-label="Email details to copy" readonly hidden></textarea>
 
           </form>
 

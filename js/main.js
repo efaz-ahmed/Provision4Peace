@@ -76,4 +76,49 @@
     updateEnquiryFields();
   }
 
+  // ---------- Email draft ----------
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const membership = reasonSelect.value === 'membership';
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const lines = [`Full name: ${name}`, `Email address: ${email}`];
+      let subject;
+
+      if (membership) {
+        subject = 'Membership fund plan application';
+        lines.push(
+          `Date of birth: ${document.getElementById('membership-dob').value}`,
+          `Preferred plan: ${document.getElementById('membership-plan').value}`,
+          `Full address: ${document.getElementById('membership-address').value.trim()}`,
+          '',
+          'Please attach proof of ID and proof of address to this email before sending. Proof of address must be dated within the past 3 months.'
+        );
+      } else {
+        subject = 'General enquiry';
+        lines.push(
+          `Phone number: ${document.getElementById('contact-phone').value.trim()}`,
+          `Preferred contact method: ${document.querySelector('input[name="ContactMethod"]:checked').value}`,
+          '',
+          document.getElementById('contact-message').value.trim()
+        );
+      }
+
+      const body = lines.join('\r\n');
+      const draft = `mailto:Info@provision4peace.org.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const draftLink = document.getElementById('contact-email-draft');
+      const status = document.getElementById('contact-email-status');
+      const copy = document.getElementById('contact-email-copy');
+      draftLink.href = draft;
+      draftLink.hidden = false;
+      status.hidden = false;
+      copy.value = `To: Info@provision4peace.org.uk\r\nSubject: ${subject}\r\n\r\n${body}`;
+      copy.hidden = false;
+      window.location.href = draft;
+    });
+  }
+
 })();

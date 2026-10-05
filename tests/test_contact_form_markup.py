@@ -100,8 +100,6 @@ class ContactFormMarkupTests(unittest.TestCase):
             "membership-dob": "date",
             "membership-plan": None,
             "membership-address": None,
-            "membership-proof-id": "file",
-            "membership-proof-address": "file",
         }
         for control_id, input_type in expected_controls.items():
             control = self.parser.by_id(control_id)
@@ -118,6 +116,9 @@ class ContactFormMarkupTests(unittest.TestCase):
         membership_text = membership.text().lower()
         self.assertIn("within the past 3 months", membership_text)
         self.assertIn("attach both documents manually", membership_text)
+        self.assertIn("passport copy or driving licence", membership_text)
+        self.assertIn("bank statement", membership_text)
+        self.assertFalse(any(control.attrs.get("type") == "file" for control in membership.descendants("input")))
 
     def test_common_and_general_fields_keep_the_existing_enquiry_flow(self):
         self.assertIn("required", self.parser.by_id("contact-name").attrs)
@@ -130,6 +131,14 @@ class ContactFormMarkupTests(unittest.TestCase):
             control = self.parser.by_id(control_id)
             self.assertIn(control, general.descendants())
             self.assertIn("disabled", control.attrs)
+
+    def test_email_draft_has_a_visible_fallback_after_submission(self):
+        form = self.parser.by_id("contact-form")
+        self.assertIsNotNone(form)
+        self.assertIsNotNone(self.parser.by_id("contact-email-draft"))
+        self.assertIn("hidden", self.parser.by_id("contact-email-draft").attrs)
+        self.assertIn("hidden", self.parser.by_id("contact-email-status").attrs)
+        self.assertIn("open email draft", form.text().lower())
 
 
 if __name__ == "__main__":

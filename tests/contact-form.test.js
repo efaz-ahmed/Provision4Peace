@@ -28,6 +28,13 @@ function createSection(controls) {
 
 function runContactForm() {
   let onReasonChange;
+  let onSubmit;
+  const location = { href: '' };
+  const form = {
+    addEventListener(type, callback) {
+      if (type === 'submit') onSubmit = callback;
+    },
+  };
   const reason = {
     value: '',
     addEventListener(type, callback) {
@@ -43,6 +50,18 @@ function runContactForm() {
     'contact-reason': reason,
     'membership-enquiry-fields': membershipSection,
     'general-enquiry-fields': generalSection,
+    'contact-form': form,
+    'contact-name': { value: 'Amina Rahman' },
+    'contact-email': { value: 'amina@example.com' },
+    'membership-dob': { value: '1980-05-12' },
+    'membership-plan': { value: 'Standard' },
+    'membership-address': { value: '12 High Street, London' },
+    'contact-phone': { value: '07123456789' },
+    'contact-message': { value: 'Please call me.' },
+    'contact-method': { value: 'Phone' },
+    'contact-email-draft': { href: '', hidden: true },
+    'contact-email-status': { hidden: true },
+    'contact-email-copy': { value: '', hidden: true },
   };
 
   const document = {
@@ -51,6 +70,10 @@ function runContactForm() {
     getElementById(id) {
       return nodes[id] || null;
     },
+    querySelector(selector) {
+      if (selector === 'input[name="ContactMethod"]:checked') return nodes['contact-method'];
+      return null;
+    },
   };
 
   vm.runInNewContext(mainScript, {
@@ -58,6 +81,7 @@ function runContactForm() {
     document,
     window: {
       addEventListener() {},
+      location,
       scrollY: 0,
     },
   });
@@ -68,6 +92,8 @@ function runContactForm() {
     membershipControls,
     membershipSection,
     reason,
+    location,
+    nodes,
     selectReason(value) {
       assert.equal(
         typeof onReasonChange,
@@ -76,6 +102,13 @@ function runContactForm() {
       );
       reason.value = value;
       onReasonChange();
+    },
+    submit() {
+      assert.equal(typeof onSubmit, 'function');
+      let prevented = false;
+      onSubmit({ preventDefault() { prevented = true; } });
+      assert.equal(prevented, true);
+      return new URL(location.href);
     },
   };
 }
@@ -126,4 +159,39 @@ test('selecting general enquiry shows and requires only the general fields', () 
       { disabled: true, required: false },
     ]
   );
+});
+
+test('membership application creates an email draft with details and attachment instructions', () => {
+  const form = runContactForm();
+  form.selectReason('membership');
+
+  const draft = form.submit();
+
+  assert.equal(draft.protocol, 'mailto:');
+  assert.equal(draft.pathname, 'Info@provision4peace.org.uk');
+  assert.match(draft.searchParams.get('subject'), /membership fund plan/i);
+  const body = draft.searchParams.get('body');
+  for (const detail of ['Amina Rahman', 'amina@example.com', '1980-05-12', 'Standard', '12 High Street, London']) {
+    assert.ok(body.includes(detail), `Expected email draft to include ${detail}`);
+  }
+  assert.match(body, /attach.*proof of ID.*proof of address/is);
+  assert.equal(form.nodes['contact-email-draft'].href, form.location.href);
+  assert.equal(form.nodes['contact-email-status'].hidden, false);
+  assert.equal(form.nodes['contact-email-copy'].hidden, false);
+  assert.match(form.nodes['contact-email-copy'].value, /To: Info@provision4peace\.org\.uk/);
+  assert.match(form.nodes['contact-email-copy'].value, /attach proof of ID and proof of address/i);
+});
+
+test('general enquiry draft includes its message and preferred contact method', () => {
+  const form = runContactForm();
+  form.selectReason('general');
+
+  const draft = form.submit();
+  const body = draft.searchParams.get('body');
+
+  assert.equal(draft.searchParams.get('subject'), 'General enquiry');
+  assert.match(body, /Phone number: 07123456789/);
+  assert.match(body, /Preferred contact method: Phone/);
+  assert.match(body, /Please call me\./);
+  assert.doesNotMatch(body, /Date of birth|proof of ID/);
 });
