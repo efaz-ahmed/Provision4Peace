@@ -109,9 +109,9 @@ module.exports = async function handler(req, res) {
   }
 
   const apiKey = process.env.RESEND_API_KEY;
-  const recipient = process.env.CONTACT_RECIPIENT;
-  const from = process.env.RESEND_FROM;
-  if (!apiKey || !recipient || !from) {
+  const recipient = process.env.CONTACT_RECIPIENT || 'Info@provision4peace.org.uk';
+  const from = process.env.RESEND_FROM || 'Provision4Peace Website <onboarding@resend.dev>';
+  if (!apiKey) {
     console.error('[Provision4Peace contact] Missing email service configuration.');
     return res.status(500).json({
       success: false,

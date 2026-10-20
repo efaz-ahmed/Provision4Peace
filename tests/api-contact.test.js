@@ -77,6 +77,36 @@ test('membership submission sends applicant and nominee data to Resend', async (
   });
 });
 
+test('email configuration follows NVH defaults when only the Resend API key is set', async () => {
+  const names = ['RESEND_API_KEY', 'CONTACT_RECIPIENT', 'RESEND_FROM'];
+  const previous = Object.fromEntries(names.map((name) => [name, process.env[name]]));
+  process.env.RESEND_API_KEY = 're_test_key';
+  delete process.env.CONTACT_RECIPIENT;
+  delete process.env.RESEND_FROM;
+
+  const originalFetch = global.fetch;
+  let payload;
+  global.fetch = async (url, options) => {
+    payload = JSON.parse(options.body);
+    return { ok: true, status: 200, text: async () => '{"id":"email_defaults"}' };
+  };
+
+  try {
+    const res = mockResponse();
+    await handler({ method: 'POST', body: validMembership() }, res);
+
+    assert.equal(res.statusCode, 200);
+    assert.equal(payload.to[0], 'Info@provision4peace.org.uk');
+    assert.equal(payload.from, 'Provision4Peace Website <onboarding@resend.dev>');
+  } finally {
+    global.fetch = originalFetch;
+    for (const name of names) {
+      if (previous[name] === undefined) delete process.env[name];
+      else process.env[name] = previous[name];
+    }
+  }
+});
+
 test('general enquiry is accepted without membership or nominee data', async () => {
   await withEmailConfig(async () => {
     const originalFetch = global.fetch;
