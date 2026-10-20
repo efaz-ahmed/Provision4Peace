@@ -91,7 +91,7 @@ class ContactFormMarkupTests(unittest.TestCase):
             ],
         )
 
-    def test_membership_path_contains_the_required_application_fields(self):
+    def test_membership_path_contains_the_required_applicant_and_nominee_fields(self):
         membership = self.parser.by_id("membership-enquiry-fields")
         self.assertIsNotNone(membership)
         self.assertIn("hidden", membership.attrs)
@@ -100,12 +100,21 @@ class ContactFormMarkupTests(unittest.TestCase):
             "membership-dob": "date",
             "membership-plan": None,
             "membership-address": None,
+            "nominee-name": "text",
+            "nominee-dob": "date",
+            "nominee-address": None,
+            "nominee-phone": "tel",
+            "nominee-email": "email",
+            "nominee-relationship": None,
         }
         for control_id, input_type in expected_controls.items():
             control = self.parser.by_id(control_id)
             self.assertIn(control, membership.descendants())
             self.assertIn("disabled", control.attrs)
             self.assertEqual(control.attrs.get("data-required-when-visible"), "true")
+            labels = [node for node in self.parser.order if node.tag == "label" and node.attrs.get("for") == control_id]
+            self.assertTrue(labels, f"Expected a label for {control_id}")
+            self.assertIn("*", labels[0].text())
             if input_type is not None:
                 self.assertEqual(control.attrs.get("type"), input_type)
 
@@ -115,30 +124,50 @@ class ContactFormMarkupTests(unittest.TestCase):
 
         membership_text = membership.text().lower()
         self.assertIn("within the past 3 months", membership_text)
-        self.assertIn("attach both documents manually", membership_text)
+        self.assertIn("send both documents separately", membership_text)
         self.assertIn("passport copy or driving licence", membership_text)
         self.assertIn("bank statement", membership_text)
         self.assertFalse(any(control.attrs.get("type") == "file" for control in membership.descendants("input")))
 
-    def test_common_and_general_fields_keep_the_existing_enquiry_flow(self):
-        self.assertIn("required", self.parser.by_id("contact-name").attrs)
-        self.assertIn("required", self.parser.by_id("contact-email").attrs)
+    def test_common_and_general_fields_are_required(self):
+        for control_id in ("contact-name", "contact-email", "contact-phone"):
+            self.assertIn("required", self.parser.by_id(control_id).attrs)
+            labels = [node for node in self.parser.order if node.tag == "label" and node.attrs.get("for") == control_id]
+            self.assertTrue(labels, f"Expected a label for {control_id}")
+            self.assertIn("*", labels[0].text())
+        self.assertLess(
+            self.parser.order.index(self.parser.by_id("contact-email")),
+            self.parser.order.index(self.parser.by_id("contact-phone")),
+        )
 
         general = self.parser.by_id("general-enquiry-fields")
         self.assertIsNotNone(general)
         self.assertIn("hidden", general.attrs)
-        for control_id in ("contact-phone", "contact-message"):
+        for control_id in ("contact-message",):
             control = self.parser.by_id(control_id)
             self.assertIn(control, general.descendants())
             self.assertIn("disabled", control.attrs)
+            self.assertIn("data-required-when-visible", control.attrs)
+        preferred_method = [node for node in self.parser.order if node.tag == "input" and node.attrs.get("name") == "contactMethod"]
+        self.assertEqual(len(preferred_method), 2)
+        self.assertTrue(all("data-required-when-visible" in node.attrs for node in preferred_method))
+        self.assertIn("*", self.parser.by_id("contact-method-label").text())
+        reason = self.parser.by_id("contact-reason")
+        self.assertIn("required", reason.attrs)
+        reason_label = next(node for node in self.parser.order if node.tag == "label" and node.attrs.get("for") == "contact-reason")
+        self.assertIn("*", reason_label.text())
 
-    def test_email_draft_has_a_visible_fallback_after_submission(self):
+    def test_form_posts_to_site_endpoint_without_email_draft_controls(self):
         form = self.parser.by_id("contact-form")
         self.assertIsNotNone(form)
-        self.assertIsNotNone(self.parser.by_id("contact-email-draft"))
-        self.assertIn("hidden", self.parser.by_id("contact-email-draft").attrs)
-        self.assertIn("hidden", self.parser.by_id("contact-email-status").attrs)
-        self.assertIn("open email draft", form.text().lower())
+        self.assertEqual(form.attrs.get("action"), "/api/contact")
+        self.assertEqual(form.attrs.get("method", "").lower(), "post")
+        self.assertNotIn("mailto:", form.attrs.get("action", "").lower())
+        self.assertIsNone(self.parser.by_id("contact-email-draft"))
+        self.assertIsNone(self.parser.by_id("contact-email-copy"))
+        self.assertIsNotNone(self.parser.by_id("contact-form-status"))
+        self.assertIn("send enquiry", form.text().lower())
+        self.assertNotIn("open email draft", form.text().lower())
 
 
 if __name__ == "__main__":

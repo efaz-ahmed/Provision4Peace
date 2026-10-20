@@ -57,6 +57,7 @@
   const reasonSelect = document.getElementById('contact-reason');
   const membershipFields = document.getElementById('membership-enquiry-fields');
   const generalFields = document.getElementById('general-enquiry-fields');
+  let updateEnquiryFields = () => {};
 
   if (reasonSelect && membershipFields && generalFields) {
     const setSectionState = (section, visible) => {
@@ -67,7 +68,7 @@
       });
     };
 
-    const updateEnquiryFields = () => {
+    updateEnquiryFields = () => {
       setSectionState(membershipFields, reasonSelect.value === 'membership');
       setSectionState(generalFields, reasonSelect.value === 'general');
     };
@@ -76,48 +77,67 @@
     updateEnquiryFields();
   }
 
-  // ---------- Email draft ----------
+  // ---------- Contact form submission ----------
   const contactForm = document.getElementById('contact-form');
   if (contactForm) {
-    contactForm.addEventListener('submit', (event) => {
+    contactForm.addEventListener('submit', async (event) => {
       event.preventDefault();
 
       const membership = reasonSelect.value === 'membership';
-      const name = document.getElementById('contact-name').value.trim();
-      const email = document.getElementById('contact-email').value.trim();
-      const lines = [`Full name: ${name}`, `Email address: ${email}`];
-      let subject;
+      const value = (id) => document.getElementById(id).value.trim();
+      const payload = {
+        reason: reasonSelect.value,
+        fullName: value('contact-name'),
+        email: value('contact-email'),
+        phone: value('contact-phone'),
+        _honey: value('contact-company'),
+      };
 
       if (membership) {
-        subject = 'Membership fund plan application';
-        lines.push(
-          `Date of birth: ${document.getElementById('membership-dob').value}`,
-          `Preferred plan: ${document.getElementById('membership-plan').value}`,
-          `Full address: ${document.getElementById('membership-address').value.trim()}`,
-          '',
-          'Please attach proof of ID and proof of address to this email before sending. Proof of address must be dated within the past 3 months.'
-        );
+        payload.dateOfBirth = value('membership-dob');
+        payload.plan = value('membership-plan');
+        payload.address = value('membership-address');
+        payload.nominee = {
+          name: value('nominee-name'),
+          dateOfBirth: value('nominee-dob'),
+          address: value('nominee-address'),
+          phone: value('nominee-phone'),
+          email: value('nominee-email'),
+          relationship: value('nominee-relationship'),
+        };
       } else {
-        subject = 'General enquiry';
-        lines.push(
-          `Phone number: ${document.getElementById('contact-phone').value.trim()}`,
-          `Preferred contact method: ${document.querySelector('input[name="ContactMethod"]:checked').value}`,
-          '',
-          document.getElementById('contact-message').value.trim()
-        );
+        const contactMethod = document.querySelector('input[name="contactMethod"]:checked');
+        payload.contactMethod = contactMethod ? contactMethod.value : '';
+        payload.message = value('contact-message');
       }
 
-      const body = lines.join('\r\n');
-      const draft = `mailto:Info@provision4peace.org.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      const draftLink = document.getElementById('contact-email-draft');
-      const status = document.getElementById('contact-email-status');
-      const copy = document.getElementById('contact-email-copy');
-      draftLink.href = draft;
-      draftLink.hidden = false;
+      const status = document.getElementById('contact-form-status');
+      const submitButton = document.getElementById('contact-form-submit');
       status.hidden = false;
-      copy.value = `To: Info@provision4peace.org.uk\r\nSubject: ${subject}\r\n\r\n${body}`;
-      copy.hidden = false;
-      window.location.href = draft;
+      status.textContent = 'Sending your enquiry…';
+      submitButton.disabled = true;
+
+      try {
+        const response = await window.fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json();
+        if (!response.ok || result.success !== true) {
+          throw new Error(result.message || 'Please try again.');
+        }
+
+        contactForm.reset();
+        updateEnquiryFields();
+        status.textContent = 'Your enquiry has been sent successfully. We will be in touch.';
+        submitButton.textContent = 'Enquiry sent';
+      } catch (error) {
+        status.textContent = error && error.message
+          ? `We couldn’t send your enquiry: ${error.message}`
+          : 'We couldn’t send your enquiry. Please try again or contact us by phone.';
+        submitButton.disabled = false;
+      }
     });
   }
 
